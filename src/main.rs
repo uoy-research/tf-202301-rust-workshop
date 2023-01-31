@@ -1,8 +1,26 @@
 use rayon::prelude::*;
-use std::env::var;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
+use clap::Parser;
+
+#[derive(Parser)]
+#[command(version)]
+/// Find palindromes in FASTA files
+struct Args {
+    /// Show log messages. Multiple -v options increase the verbosity
+    #[clap(short='v', long="verbose", action=clap::ArgAction::Count)]
+    verbose: u8,
+    /// The desired palindrome length
+    #[clap(short = 'l', long = "length", value_name = "len", default_value = "10")]
+    length: usize,
+    /// The desired thread number
+    #[clap(short = 't', long = "threads", value_name = "n", default_value = "1")]
+    threads: usize,
+    /// The input FASTA file
+    #[clap(value_name = "FILE")]
+    input_path: PathBuf,
+}
 
 fn complement(c: char) -> char {
     match c {
@@ -40,16 +58,13 @@ fn load_sequence(path: &Path) -> String {
 }
 
 fn main() {
+    let args = Args::parse();
     rayon::ThreadPoolBuilder::new()
-        .num_threads(8)
+        .num_threads(args.threads)
         .build_global()
         .unwrap();
-    let window_size: usize = 100;
-    let input_path = PathBuf::from(format!(
-        "{}/tests/chr1.fasta",
-        var("CARGO_MANIFEST_DIR").unwrap()
-    ));
-    let input_sequence = load_sequence(&input_path);
+    let window_size = args.length;
+    let input_sequence = load_sequence(&args.input_path);
     let positions: Vec<usize> = (0_usize..(input_sequence.len() - window_size))
         .into_par_iter()
         .filter_map(|i| {
@@ -63,7 +78,6 @@ fn main() {
             }
         })
         .collect();
-    println!("{} palindromes found", positions.len());
     for i in positions {
         println!("{}\t{}", i, &input_sequence[i..(i + window_size)]);
     }
@@ -71,6 +85,7 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
+    use std::env::var;
     use super::*;
 
     #[test]
