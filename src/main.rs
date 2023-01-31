@@ -1,6 +1,6 @@
 use clap::Parser;
 use rayon::prelude::*;
-use simple_eyre::eyre::Report;
+use simple_eyre::eyre::Result;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
@@ -9,13 +9,10 @@ use std::path::{Path, PathBuf};
 #[command(version)]
 /// Find palindromes in FASTA files
 struct Args {
-    /// Show log messages. Multiple -v options increase the verbosity
-    #[clap(short='v', long="verbose", action=clap::ArgAction::Count)]
-    verbose: u8,
     /// The desired palindrome length
-    #[clap(short = 'l', long = "length", value_name = "len", default_value = "10")]
+    #[clap(short = 'l', long = "length", value_name = "l", default_value = "10")]
     length: usize,
-    /// The desired thread number
+    /// The number of threads to use
     #[clap(short = 't', long = "threads", value_name = "n", default_value = "1")]
     threads: usize,
     /// The input FASTA file
@@ -43,7 +40,7 @@ fn all_n(s: &str) -> bool {
     s.chars().all(|c| c == 'N')
 }
 
-fn load_sequence(path: &Path) -> Result<String, Report> {
+fn load_sequence(path: &Path) -> Result<String> {
     let input_file = File::open(path)?;
     let input_buffer = BufReader::new(input_file);
     Ok(input_buffer
@@ -56,7 +53,8 @@ fn load_sequence(path: &Path) -> Result<String, Report> {
         .collect())
 }
 
-fn main() -> Result<(), Report> {
+fn main() -> Result<()> {
+    simple_eyre::install()?;
     let args = Args::parse();
     rayon::ThreadPoolBuilder::new()
         .num_threads(args.threads)
