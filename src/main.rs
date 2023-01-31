@@ -25,6 +25,10 @@ fn is_palindrome(s: &str) -> bool {
     s[0..half_len] == reverse_complement(&s[half_len..])
 }
 
+fn all_n(s: &str) -> bool {
+    s.chars().all(|c| c == 'N')
+}
+
 fn load_sequence(path: &Path) -> String {
     let input_file = File::open(&path).unwrap();
     let input_buffer = BufReader::new(input_file);
@@ -43,6 +47,9 @@ fn main() {
     let input_sequence = load_sequence(&input_path);
     let positions:Vec<usize> = (0_usize..(input_sequence.len() - window_size)).into_iter().filter_map(|i| {
         let slice = &input_sequence[i..(i + window_size)];
+        if all_n(&slice) {
+            return None
+        };
         match is_palindrome(slice) {
             false => None,
             true => Some(i),
@@ -86,5 +93,11 @@ mod tests {
     fn test_load_sequence() {
         let input_path = PathBuf::from(format!("{}/tests/tiny.fasta", var("CARGO_MANIFEST_DIR").unwrap()));
         assert_eq!(load_sequence(&input_path), "ACATGAGGC");
+    }
+
+    #[test]
+    fn test_all_n() {
+        assert_eq!(all_n("NNNNN"), true);
+        assert_eq!(all_n("NNTNN"), false);
     }
 }
