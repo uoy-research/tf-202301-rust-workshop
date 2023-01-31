@@ -18,11 +18,9 @@ fn reverse_complement(s: &str) -> String {
 }
 
 fn is_palindrome(s: &str) -> bool {
-    if s.len() % 2 != 0 {
-        return false;
-    }
-    let half_len = s.len() / 2_usize;
-    s[0..half_len] == reverse_complement(&s[half_len..])
+    s.chars().zip(s.chars().rev()).all(|(i, j)|{
+        i == complement(j)
+    })
 }
 
 fn all_n(s: &str) -> bool {
