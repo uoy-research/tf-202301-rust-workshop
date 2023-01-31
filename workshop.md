@@ -21,7 +21,8 @@ Add the files we don't want to track to `.gitignore`:
 ~~~plain
 **/.DS_Store
 /target
-/tests
+/tests/
+!/tests/tiny.fasta
 ~~~
 
 Make the first commit to the repo:
