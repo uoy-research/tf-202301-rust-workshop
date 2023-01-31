@@ -2,6 +2,7 @@ use std::fs::File;
 use std::path::{Path, PathBuf};
 use std::io::{BufRead, BufReader};
 use std::env::var;
+use rayon::prelude::*;
 
 fn complement(c: char) -> char {
     match c {
@@ -40,10 +41,11 @@ fn load_sequence(path: &Path) -> String {
 }
 
 fn main() {
+    rayon::ThreadPoolBuilder::new().num_threads(8).build_global().unwrap();
     let window_size:usize = 100;
-    let input_path = PathBuf::from(format!("{}/tests/small.fasta", var("CARGO_MANIFEST_DIR").unwrap()));
+    let input_path = PathBuf::from(format!("{}/tests/chr1.fasta", var("CARGO_MANIFEST_DIR").unwrap()));
     let input_sequence = load_sequence(&input_path);
-    let positions:Vec<usize> = (0_usize..(input_sequence.len() - window_size)).into_iter().filter_map(|i| {
+    let positions:Vec<usize> = (0_usize..(input_sequence.len() - window_size)).into_par_iter().filter_map(|i| {
         let slice = &input_sequence[i..(i + window_size)];
         if all_n(&slice) {
             return None
