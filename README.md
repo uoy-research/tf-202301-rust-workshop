@@ -2,6 +2,8 @@
 
 This repo provides a workshop showing how we can build a rust program to find palindromes in FASTA files.
 
+Before working through the worksheet, please see the [introductory slides](./TF202301-rust-workshop.pdf).
+
 Please see the [worksheet](./worksheet.md) for step-by-step instructions on the process.
 
 ## Installation
