@@ -61,10 +61,11 @@ fn main() -> Result<()> {
         .build_global()?;
     let window_size = args.length;
     let input_sequence = load_sequence(&args.input_path)?;
-    let positions: Vec<usize> = (0_usize..(input_sequence.len() - window_size))
+    let positions: Vec<usize> = (0_usize..=(input_sequence.len() - window_size))
         .into_par_iter()
         .filter_map(|i| {
             let slice = &input_sequence[i..(i + window_size)];
+            println!("{}", slice);
             if all_n(slice) {
                 return None;
             };

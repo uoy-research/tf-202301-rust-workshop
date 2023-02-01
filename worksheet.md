@@ -178,7 +178,7 @@ git commit -m"Add load_sequence"
 let window_size:usize = 100;
 let input_path = PathBuf::from(format!("{}/tests/small.fasta", var("CARGO_MANIFEST_DIR").unwrap()));
 let input_sequence = load_sequence(&input_path);
-let positions:Vec<usize> = (0_usize..(input_sequence.len() - window_size)).into_iter().filter_map(|i| {
+let positions:Vec<usize> = (0_usize..=(input_sequence.len() - window_size)).into_iter().filter_map(|i| {
     let slice = &input_sequence[i..(i + window_size)];
     match is_palindrome(slice) {
         false => None,
