@@ -21,14 +21,14 @@ Add the files we don't want to track to `.gitignore`:
 ~~~plain
 **/.DS_Store
 /target
-/tests/
-!/tests/tiny.fasta
+/tests/small.fasta
+/tests/genome.fasta
 ~~~
 
 Make the first commit to the repo:
 
 ~~~bash
-git add src/main.rs .gitignore Cargo.lock Cargo.toml
+git add src/main.rs .gitignore Cargo.lock Cargo.toml tests/tiny.fasta tests/get-fasta.sh
 git commit -m"Initial commit of palindrome project"
 ~~~
 

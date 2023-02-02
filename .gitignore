@@ -1,4 +1,4 @@
 **/.DS_Store
 /target
-/tests/
-!/tests/tiny.fasta
+/tests/small.fasta
+/tests/genome.fasta
